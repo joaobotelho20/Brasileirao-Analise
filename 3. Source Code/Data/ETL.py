@@ -44,20 +44,18 @@ def unir_xlsx_em_df(pasta):
 
 
 
-# def ler_json(caminho):
-#     """
-#     Lê arquivo json e entrega em uma estrutura DataFrame
+def ler_json(caminho):
+    """
+    Lê arquivo JSON e entrega em uma estrutura DataFrame.
 
-#     Parâmetros: 
-#     - caminho (str): Caminho da pasta com os arquivos .json
-#     Ex.: r'C:\Users\....\nome_arquivo.json'
+    Parâmetros:
+    - caminho (str): Caminho completo do arquivo .json.
+      Exemplo: r'C:\\Users\\...\\arquivo.json'
 
-#     Retorna:
-#     - df (pd.DataFrame): DataFrame da estrutura inicial do json.
-#     """
-
-#     with open(caminho, 'r', encoding='utf-8') as arquivo:
-#         dados = json.load(arquivo)
-#     df = pd.DataFrame(dados)
-
-#     return df
+    Retorna:
+    - df (pd.DataFrame): DataFrame com os dados carregados do JSON.
+    """
+    with open(caminho, 'r', encoding='utf-8') as arquivo:
+        dados = json.load(arquivo)
+    df = pd.DataFrame(dados)
+    return df
