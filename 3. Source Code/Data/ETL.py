@@ -59,3 +59,22 @@ def ler_json(caminho):
         dados = json.load(arquivo)
     df = pd.DataFrame(dados)
     return df
+
+def expandir_json(df: pd.DataFrame, prefixo: str) -> pd.DataFrame:
+    """
+    Expande a coluna 'pontuacao_geral_{prefixo}' de um DataFrame, que contém dicionários ou JSONs,
+    em várias colunas separadas, prefixando os nomes com o valor de 'prefixo'.
+
+    Parâmetros:
+        df (pd.DataFrame): DataFrame de entrada contendo a coluna com dados em formato dict/JSON.
+        prefixo (str): Prefixo que define o nome da coluna a ser expandida e será usado nas novas colunas.
+
+    Retorna:
+        pd.DataFrame: Novo DataFrame com as colunas expandidas e renomeadas com o prefixo.
+    """
+
+    coluna_json = df[f'pontuacao_geral_{prefixo}']
+    colunas_expandida = pd.json_normalize(coluna_json)
+    colunas_expandida.columns = [f'{prefixo}_{col}' for col in colunas_expandida.columns]
+
+    return colunas_expandida
