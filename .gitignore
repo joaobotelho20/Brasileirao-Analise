@@ -1,2 +1,5 @@
 client_secret.json
 token.json
+colab_env
+.venv
+__pycache__/
