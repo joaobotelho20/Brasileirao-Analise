@@ -5,6 +5,33 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
+#display(df_ajustado)
+def mesclar_linhas_sem_conflito(grupo):
+    # Verifica se todas as colunas (exceto as de agrupamento) têm valores únicos OU nulos iguais
+    dados_sem_grupo = grupo.drop(columns=['Data', 'Mandante', 'Visitante', 'edition'])
+    
+    # Verifica se todos os valores são iguais OU nulos em cada coluna
+    for col in dados_sem_grupo.columns:
+        valores_unicos = grupo[col].dropna().unique()
+        if len(valores_unicos) > 1:
+            return grupo  # Conflito: mantém todas as linhas do jeito que estão
+    
+    # Caso não tenha conflito, retorna apenas uma linha com os valores "não nulos" (ou o primeiro)
+    linha_mesclada = grupo.iloc[0].copy()
+    for col in dados_sem_grupo.columns:
+        valor = grupo[col].dropna().iloc[0] if not grupo[col].dropna().empty else None
+        linha_mesclada[col] = valor
+    
+    return pd.DataFrame([linha_mesclada])
+
+def ajustar_datas(grupo):
+    grupo = grupo.sort_values('Data').reset_index(drop=True)  # Ordena por data
+    for i in range(1, len(grupo)):
+        diff = (grupo.loc[i, 'Data'] - grupo.loc[i-1, 'Data']).days
+        if diff == 1:
+            grupo.loc[i, 'Data'] = grupo.loc[i-1, 'Data']  # Ajusta a data para a anterior
+    return grupo
+
 #função para verificar coluna de df
 def verificar_coluna(df_list, coluna):
     resultado = pd.DataFrame(columns=['Nulo', 'NaN', 'Total'])
