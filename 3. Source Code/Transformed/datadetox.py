@@ -5,6 +5,32 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
+def verifica_partidas_edi(df,edition,coluna='Mandante'):
+
+
+    # Conta quantas vezes cada time foi mandante por edição
+    contagem = df.groupby([edition])[coluna].value_counts()
+
+    # Transforma em DataFrame
+    contagem_df = contagem.reset_index(name='n_partidas')
+
+    # Agora verifica, por edição, se todos os times têm o mesmo número de partidas
+    verificacao = contagem_df.groupby(edition)['n_partidas'].nunique()
+
+    # Mostra edições com mais de um número distinto de partidas (ou seja, houve desigualdade)
+    edicoes_desiguais = verificacao[verificacao > 1]
+
+    return print(f"Edições com número desigual de partidas por time: {edicoes_desiguais}")
+
+def unificar_data_maior(df, cols_grupo, col_data='Data'):
+    # Encontra a maior data para cada grupo
+    datas_max = df.groupby(cols_grupo)[col_data].transform('max')
+    
+    # Substitui a data original pela maior
+    df[col_data] = datas_max
+    
+    return df
+
 #display(df_ajustado)
 def mesclar_linhas_sem_conflito(grupo):
     # Verifica se todas as colunas (exceto as de agrupamento) têm valores únicos OU nulos iguais
@@ -24,6 +50,15 @@ def mesclar_linhas_sem_conflito(grupo):
     
     return pd.DataFrame([linha_mesclada])
 
+def ajustar_datas_semdiff(grupo,keep=True):
+    grupo = grupo.sort_values('Data').reset_index(drop=True)  # Ordena por data
+    for i in range(1, len(grupo)):
+        if keep:
+            grupo.loc[i, 'Data'] = grupo.loc[i-1, 'Data']  # Ajusta a data para a anterior
+        else:
+            grupo.loc[i-1, 'Data'] = grupo.loc[i, 'Data']
+    return grupo
+
 def ajustar_datas(grupo):
     grupo = grupo.sort_values('Data').reset_index(drop=True)  # Ordena por data
     for i in range(1, len(grupo)):
@@ -31,6 +66,20 @@ def ajustar_datas(grupo):
         if diff == 1:
             grupo.loc[i, 'Data'] = grupo.loc[i-1, 'Data']  # Ajusta a data para a anterior
     return grupo
+
+
+def ajustar_datas_com_gap(grupo, gap=1, keep_max=True):
+    grupo = grupo.sort_values('Data').reset_index(drop=True)  # Ordena por data
+    for i in range(1, len(grupo)):
+        diff = (grupo.loc[i, 'Data'] - grupo.loc[i-1, 'Data']).days
+        if diff == gap:
+            if keep_max:
+                grupo.loc[i, 'Data'] = grupo.loc[i-1, 'Data'] 
+            else:
+                grupo.loc[i-1, 'Data'] = grupo.loc[i, 'Data'] 
+                 # Ajusta a data para a anterior
+    return grupo
+
 
 #função para verificar coluna de df
 def verificar_coluna(df_list, coluna):
