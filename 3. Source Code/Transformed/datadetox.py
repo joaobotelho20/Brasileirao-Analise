@@ -5,6 +5,16 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
+def arredondar_quase_15min(dt,min=1,div=15):
+    minuto = dt.minute
+    resto = minuto % div
+    if resto == div - min:
+        return dt + pd.Timedelta(minutes=min)
+    elif resto == min:
+        return dt - pd.Timedelta(minutes=min)
+    else:
+        return dt
+
 def verifica_partidas_edi(df,edition,coluna='Mandante'):
 
 
