@@ -1,9 +1,21 @@
 import pandas as pd
 import re
-import unidecode
+import unicodedata
 import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
+
+
+def normalizar_texto(texto):
+    if pd.isna(texto):
+        return texto
+    # Transforma em string, caixa baixa
+    texto = str(texto).lower()
+    # Remove acentos
+    texto = unicodedata.normalize('NFKD', texto).encode('ASCII', 'ignore').decode('utf-8')
+    # Remove espaços extras
+    texto = re.sub(r'\s+', ' ', texto).strip()
+    return texto
 
 def arredondar_quase_15min(dt,min=1,div=15):
     minuto = dt.minute
