@@ -4,6 +4,62 @@ import unicodedata
 import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
+import json
+from json import JSONDecodeError
+
+def distribuir_pontos(df, mandante, visitante, pontos_mandante='Pontos Mandante', pontos_visitante='Pontos Visitante'):
+    """Distribui pontos de partidas entre times mandantes e visitantes conforme resultados.
+    
+    Atribui pontos às equipes baseado no resultado do confronto:
+    - Em caso de empate: 1 ponto para cada time
+    - Em caso de vitória: 3 pontos para o vencedor, 0 para o perdedor
+    
+    Args:
+        df (pd.DataFrame): DataFrame contendo os resultados das partidas
+        mandante (str): Nome da coluna com os resultados/placares do time mandante
+        visitante (str): Nome da coluna com os resultados/placares do time visitante
+        pontos_mandante (str, optional): Nome da coluna para os pontos do mandante. 
+            Defaults to 'Pontos Mandante'.
+        pontos_visitante (str, optional): Nome da coluna para os pontos do visitante.
+            Defaults to 'Pontos Visitante'.
+    
+    Returns:
+        pd.DataFrame: DataFrame original com as duas novas colunas de pontos adicionadas/modificadas
+    
+    """
+    df[pontos_mandante] = np.where(
+        df[mandante] == df[visitante], 1,
+        np.where(df[mandante] > df[visitante], 3, 0))
+    
+    df[pontos_visitante] = np.where(
+        df[mandante] == df[visitante], 1,
+        np.where(df[mandante] < df[visitante], 3, 0))
+    
+    return df
+
+def ler_json_as_dict(arquivo):
+    """
+    Lê um arquivo JSON e retorna como dicionário Python.
+    
+    Args:
+        arquivo (str): Caminho para o arquivo JSON
+        
+    Returns:
+        dict: Dicionário com os dados do JSON ou None em caso de erro
+    """
+    dados = None  # Inicializa como None para caso ocorram erros
+    
+    try:
+        with open(arquivo, 'r', encoding='utf-8') as f:
+            dados = json.load(f)
+    except FileNotFoundError:
+        print(f"Erro: Arquivo '{arquivo}' não encontrado")
+    except JSONDecodeError as jde:
+        print(f"Erro: JSON mal formatado no arquivo '{arquivo}': {jde}")
+    except Exception as e:
+        print(f"Erro inesperado ao ler '{arquivo}': {e}")
+    
+    return dados
 
 
 def normalizar_texto(texto):
