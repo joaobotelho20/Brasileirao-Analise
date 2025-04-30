@@ -356,3 +356,65 @@ def gerar_dicionario_mapeamento(resultados, limite=0.0):
         if score >= limite
     }
     return mapeamento
+
+def pont_acumulada(df, season):
+    """
+    Calcula o aproveitamento acumulado dos times mandantes e visitantes
+    ao longo de uma temporada específica de um campeonato de futebol.
+
+    O aproveitamento é definido como a razão entre os pontos acumulados
+    e o número máximo de pontos possíveis até a rodada atual (rodada * 3).
+
+    Args:
+        df (pandas.DataFrame): 
+            DataFrame contendo os dados dos jogos. Deve conter, no mínimo,
+            as seguintes colunas:
+            - 'edition': Identificador da temporada.
+            - 'Rodada': Número da rodada do jogo.
+            - 'Mandante': Nome do time mandante.
+            - 'Visitante': Nome do time visitante.
+            - 'Pontos Mandante': Pontos obtidos pelo mandante no jogo.
+            - 'Pontos Visitante': Pontos obtidos pelo visitante no jogo.
+
+        season (int or str): 
+            Temporada a ser considerada para o cálculo. Deve corresponder
+            aos valores da coluna 'edition'.
+
+    Returns:
+        pandas.DataFrame: 
+            O DataFrame original com duas novas colunas adicionadas:
+            - 'AP_Mand Acumulados': Aproveitamento acumulado do mandante.
+            - 'AP_Vis Acumulados': Aproveitamento acumulado do visitante.
+
+    Observações:
+        - A função atualiza o DataFrame linha a linha, mantendo controle
+          do total de pontos acumulados por time.
+        - Ideal para análises de desempenho rodada a rodada.
+        - Para grandes volumes de dados, considere alternativas vetorizadas.
+    """
+
+    mask = df['edition'] == season
+    df_season = df[mask].copy()
+
+    pontos_acumulados = {time: 0 for time in df_season['Mandante'].unique()}
+
+    for idx, row in df_season.iterrows():
+        mandante = row['Mandante']
+        visitante = row['Visitante']
+        pt_mandante = row['Pontos Mandante']
+        pt_visitante = row['Pontos Visitante']
+        rodada = row['Rodada']
+        max_pontos = rodada * 3
+
+        # Atualiza pontos acumulados
+        pontos_acumulados[mandante] += pt_mandante
+        pontos_acumulados[visitante] += pt_visitante
+
+        # Calcula aproveitamento
+        ap_mandante = pontos_acumulados[mandante] / max_pontos
+        ap_visitante = pontos_acumulados[visitante] / max_pontos
+
+        df.loc[idx, 'AP_Mand Acumulados'] = ap_mandante
+        df.loc[idx, 'AP_Vis Acumulados'] = ap_visitante
+
+    return df

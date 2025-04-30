@@ -1,6 +1,7 @@
 {
   "olimpico engenhao": "nilton santos",
   "engenhao": "nilton santos",
+  "governador magalhaes pinto": "mineirao",
   "arena corinthians": "neo quimica arena",
   "neo quimica arena": "neo quimica arena",
   "municipal paulo machado de carvalho": "pacaembu",
@@ -22,6 +23,8 @@
   "kyocera arena": "ligga arena",
   "arena da baixada": "ligga arena",
   "joaquim americo guimaraes": "ligga arena",
+  "r de oliveira": "raulino de oliveira",
+  "general sylvio raulino de oliveira": "raulino de oliveira",
   "municipal general raulino de oliveira": "raulino de oliveira",
   "haile pinheiro - serrinha": "serrinha",
   "do vale": "estadio do vale",
@@ -52,7 +55,6 @@
   "bruno j.daniel": "bruno jose daniel",
   "bruno j daniel": "bruno jose daniel",
   "luiz lacerda": "lacerdao",
-  "r de oliveira": "raulino de oliveira",
   "serejao": "boca do jacare",
   "a.campanella": "anacleto campanella",
   "papa joao paulo ii": "vail chaves",
@@ -68,7 +70,15 @@
   "de pituacu": "pituacu",
   "texeirao": "teixeirao",
   "arena de pernambuco": "arena pernambuco",
-  "arena da amazonia": "arena amazonia",
   "nacional de brasilia": "mane garrincha",
-  "durival de brito": "vila capanema"
+  "durival de brito": "vila capanema",
+  "jornalista mario filho": "maracana",
+  "estadual kleber jose de andrade": "kleber andrade",
+  "olimpico pedro ludovico teixeira": "olimpico",
+  "cicero pompeu de toledo": "morumbi",
+  "governador placido castelo": "castelao",
+  "olimpico regional": "olimpico",
+  "de haile pinheiro": "serrinha",
+  "durival britto e silva": "vila capanema" 
+
 }
