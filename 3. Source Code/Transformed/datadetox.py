@@ -418,3 +418,54 @@ def pont_acumulada(df, season):
         df.loc[idx, 'AP_Vis Acumulados'] = ap_visitante
 
     return df
+
+def yield_last_xrounds(df: pd.DataFrame, x: int, season: int | str) -> pd.DataFrame:
+    """
+    Calcula o rendimento dos clubes como mandantes nos últimos 'x' jogos, para uma temporada específica.
+
+    Parâmetros:
+    -----------
+    df : pd.DataFrame
+        DataFrame contendo os dados das partidas, com colunas como 'temporada', 'Rodada',
+        'Mandante', 'Visitante', 'Pontos Mandante' e 'Pontos Visitante'.
+
+    x : int
+        Número de rodadas anteriores a serem consideradas para calcular o rendimento.
+
+    season : int ou str
+        Temporada (ano) a ser filtrada no DataFrame.
+
+    Retorna:
+    --------
+    pd.DataFrame
+        DataFrame original com uma nova coluna chamada 'Yield last {x} rounds',
+        indicando o rendimento dos clubes mandantes com base nos últimos 'x' jogos.
+    """
+    df_season = df[df['temporada'] == season].copy()
+
+    clubes = list(dict.fromkeys(list(df_season['Mandante'])))
+    dicionario: dict[str, list[int]] = {clube: [] for clube in clubes}
+
+    df_season = df_season.sort_values(by=['temporada', 'Rodada'], ascending=[True, True])
+
+    for idx, row in df_season.iterrows():
+        mandante = row['Mandante']
+        visitante = row['Visitante']
+        pt_mandante = row['Pontos Mandante']
+        pt_visitante = row['Pontos Visitante']
+
+        if dicionario[mandante]:
+            rendimento = sum(dicionario[mandante]) / (len(dicionario[mandante]) * 3)
+            df.loc[idx, f'Yield last {x} rounds'] = rendimento
+        else:
+            df.loc[idx, f'Yield last {x} rounds'] = 0.0
+
+        dicionario[mandante].insert(0, pt_mandante)
+        if len(dicionario[mandante]) > x:
+            dicionario[mandante].pop()
+
+        dicionario[visitante].insert(0, pt_visitante)
+        if len(dicionario[visitante]) > x:
+            dicionario[visitante].pop()
+
+    return df
